@@ -2,3 +2,4 @@
 DotNetCoreApi/appsettings.Development.json
 DotNetCoreApi/appsettings.json
 DotNetCoreApi/obj/
+*.user
