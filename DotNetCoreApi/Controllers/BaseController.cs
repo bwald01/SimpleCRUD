@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DotNetCoreApi.Repository;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,38 +11,55 @@ namespace DotNetCoreApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BaseController<T> : ControllerBase where T : class
+    public abstract class BaseController<T> : ControllerBase where T : class
     {
+        Repository<T> _repository;
+        public BaseController(string connectionString)
+        {
+            _repository = new Repository<T>(connectionString);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<T> GetAsync(int id)
+        {
+            return await _repository.GetAsync(id);
+        }
+
         // GET: api/<CRUDController>
         [HttpGet]
-        public IEnumerable<T> Get()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return new string[] { "value1", "value2" };
+            return await _repository.GetAllAsync();
         }
 
-        // GET api/<CRUDController>/5
-        [HttpGet("{id}")]
-        public T Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<CRUDController>
         [HttpPost]
-        public void Post([FromBody] T record)
+        public async Task<int?> CreateAsync([FromBody] T record)
         {
+                return await _repository.InsertAsync(record);
         }
 
-        // PUT api/<CRUDController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("Guid")]
+        public async Task<int?> CreateWithGuidAsync([FromBody] T record)
         {
+            return await _repository.InsertAsync(record);
         }
 
-        // DELETE api/<CRUDController>/5
+        [HttpPut]
+        public async Task<int> UpdateAsync([FromBody] T record)
+        {
+            return await _repository.UpdateAsync(record);
+        }
+
+        [HttpDelete]
+        public async Task<int> DeleteAsync([FromBody] T record)
+        {
+            return await _repository.DeleteAsync(record);
+        }
+
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<int> DeleteAsync(int id)
         {
+            return await _repository.DeleteAsync(id);
         }
     }
 }
