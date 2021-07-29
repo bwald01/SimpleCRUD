@@ -11,10 +11,10 @@ namespace DotNetCoreApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public abstract class BaseController<T> : ControllerBase where T : class
+    public abstract class CrudController<T> : ControllerBase where T : class
     {
         Repository<T> _repository;
-        public BaseController(string connectionString)
+        public CrudController(string connectionString)
         {
             _repository = new Repository<T>(connectionString);
         }
